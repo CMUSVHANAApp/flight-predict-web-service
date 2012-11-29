@@ -24,5 +24,6 @@
     <servlet-mapping>
         <servlet-name>spring</servlet-name>
         <url-pattern>/people/*</url-pattern>
+        <url-pattern>/prediction/*</url-pattern>
     </servlet-mapping>
 </web-app>
