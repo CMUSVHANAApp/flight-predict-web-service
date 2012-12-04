@@ -1,5 +1,10 @@
 package models;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import play.libs.Json;
+
 public class FlightQuality {
 	protected String flightNumber;
 	protected int delay_depart;
@@ -19,5 +24,13 @@ public class FlightQuality {
 				"Delay on Arrival in " + this.delay_arrival + " minutes."; 
 		
 		
+	}
+	public String toJson(){
+		Map<String,String> d = new HashMap<String,String>();
+		d.put("flightNumber", this.flightNumber);
+		d.put("delayDeparture", String.valueOf(this.delay_depart));
+		d.put("delayArrival", String.valueOf(this.delay_arrival));
+		Json json = new Json();
+		return json.toJson(d).toString();
 	}
 }
