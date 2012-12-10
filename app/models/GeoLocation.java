@@ -1,14 +1,25 @@
 package models;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Random;
 
-public class GeoLocation {
+public class GeoLocation implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3454142792990964691L;
 	protected double longitutde;
 	protected double latitude;
 	public GeoLocation(double longtitude, double latitude){
 		this.longitutde = longtitude;
 		this.latitude = latitude;
+	}
+	public double getLongitude(){
+		return this.longitutde;
+	}
+	public double getLatitude(){
+		return this.latitude;
 	}
 	public static GeoLocation getGeoLocation(){
 		Random random = new Random();

@@ -1,5 +1,57 @@
-@main(title = "Home") {
-    
-  <h1>Home page</h1>
-    
+@theme(title = "Home") {
+  <style>
+  .code{
+  	background-color: black;
+  	color: white;
+  	margin-left: 20px;
+  	padding: 15px;
+  	width: 93%;
+
+  }
+  .code .variable{
+  	color: yellow;
+  }
+  .description{
+  	font-weight: bolder;
+  	margin-top: 30px;
+  }
+  </style>
+  <h1>Usage</h1>
+  <h2>Predict Flight Service Quality</h2>
+  <ul>
+  	<li>
+   		<div class='description'>To Predict a flight service:</div>
+  		<div>
+  			<div class='code'>http://flight-prediction.herokuapp.com/predictions/<span class='variable'>Airline</span>/<span class='variable'>FlightNumber</span>/<span class='variable'>Date</span>/<span class='variable'>ArrivalAirportCode</span>/<span class='variable'>DepartureAirportCode</span></div>
+  			e.g.
+  			<div><a href='http://flight-prediction.herokuapp.com/predictions/DELTA/DL123/2012-12-10/SFO/SEA'>http://flight-prediction.herokuapp.com/predictions/DELTA/DL123/2012-12-10/SFO/SEA</a></div>  	
+  		</div>
+  	</li>
+  </ul>  
+  <h2>Fetch Weather</h2>
+  <ul>
+  	<li>
+  		<div>
+			<div class='description'>To Fetch Weather forecast</div>
+			<div class='code'>http://flight-prediction.herokuapp.com/weathers/CityName(.json/csv)</div>
+			e.g.
+			<div>
+				<a href='http://flight-prediction.herokuapp.com/weathers/mountain%20view.csv'>http://flight-prediction.herokuapp.com/weathers/mountain%20view.csv</a><br/>
+				<a href='http://flight-prediction.herokuapp.com/weathers/mountain%20view.json'>http://flight-prediction.herokuapp.com/weathers/mountain%20view.json</a>
+			</div>
+  		</div>
+  	</li>
+ 	<li>
+ 		<div>
+			<div class='description'>To Fetch Weather for specific date:</div>
+			<div class='code'>http://flight-prediction.herokuapp.com/weathers/CityName/Date(.json/csv)</div>
+			e.g.
+			<div>
+				<a href='http://flight-prediction.herokuapp.com/weathers/mountain%20view/2012-12-11.json'>http://flight-prediction.herokuapp.com/weathers/mountain%20view/2012-12-11.json</a><br/>
+				<a href='http://flight-prediction.herokuapp.com/weathers/mountain%20view/2012-12-11.csv'>http://flight-prediction.herokuapp.com/weathers/mountain%20view/2012-12-11.csv</a>
+			</div>
+		</div>
+	</li>
+  </ul>
+
 }

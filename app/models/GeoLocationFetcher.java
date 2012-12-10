@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -20,6 +22,12 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import play.api.libs.json.JsValue;
+import play.api.libs.json.Json;
+
+
+import com.avaje.ebean.text.json.JsonElement;
+
 
 public class GeoLocationFetcher {
 	public static void main(String [ ] args){
@@ -27,7 +35,7 @@ public class GeoLocationFetcher {
 		System.out.println("Weather of " + city + ":");
 		System.out.println(GeoLocationFetcher.Fetch(city));
 		
-	}
+	}	
 	public static GeoLocation Fetch(String airportCode){
 		HttpClient httpclient = new DefaultHttpClient();
 		try {
@@ -39,12 +47,17 @@ public class GeoLocationFetcher {
             
             System.out.println("executing request " + httpget.getURI());
 
-            // Create a response handler
+                       // Create a response handler
             ResponseHandler<String> responseHandler = new BasicResponseHandler();
             String responseBody = httpclient.execute(httpget, responseHandler);
-            JSONObject myjson =  new JSONObject(responseBody);
-            //JSONArray myjson = new JSONObject(responseBody).getJSONArray("result");
+            /*
+            Gson g=  new Gson();
             
+            
+            
+            JSONObject myjson =  new JSONObject(responseBody.trim());
+            JSONArray myjson = new JSONObject(responseBody).getJSONArray("result");
+            */
             
            
             
@@ -58,9 +71,6 @@ public class GeoLocationFetcher {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {

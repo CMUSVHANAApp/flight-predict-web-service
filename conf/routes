@@ -5,9 +5,13 @@
 # Home page
 GET     /                           controllers.Application.index()
 
+
 # WeatherForecast
-GET		/weathers/:city				controllers.Application.weathers(city: String)
-GET		/predictions/:flightNumber	controllers.Application.predictions(flightNumber: String)
+GET		/weathers/:city/:date.:format				controllers.Application.weather(format: String, city: String, date:String)
+GET		/weathers/:city/:date				controllers.Application.weather(format = "json", city: String, date:String)
+GET		/weathers/:city.:format				controllers.Application.weathers(format: String, city: String)
+GET		/weathers/:city							controllers.Application.weathers(format = "json", city: String)
+GET		/predictions/:airline/:flightNumber/:date/:departure/:arrival	controllers.Application.predictions(airline:String, flightNumber: String, date: String, departure: String, arrival: String)
 
 
 # Map static resources from the /public folder to the /assets URL path

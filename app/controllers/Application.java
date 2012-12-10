@@ -1,9 +1,18 @@
 package controllers;
 
+import java.beans.IntrospectionException;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import models.GeoLocation;
 import models.Prediction;
@@ -19,28 +28,27 @@ import views.*;
 public class Application extends Controller {
   
   public static Result index() {
-    return ok(index.render("Hello, World!"));
+    return ok(home.render());
   }
-  public static Result weathers(String city){
-	  ArrayList<Weather> ws = WeatherFetcher.Fetch(city);
-	  ArrayList<HashMap> r = new ArrayList<HashMap>(); 
-	  //return TODO;
-	  HashMap<String, Object> fs= new HashMap<String, Object>();
-	  fs.put("Geo", GeoLocation.getGeoLocation().toHashMap());
-	  Iterator<Weather> w_it = ws.iterator();
-	  while(w_it.hasNext()){
-		  Weather w = w_it.next();
-		  r.add(w.toHashMap());
-	  }	  
-	  fs.put("weather", r);
+  public static Result weathers(String format, String city) throws JsonGenerationException, JsonMappingException, IOException, IntrospectionException{
 	  
-	  return ok(new Json().toJson(fs).toString());
+	  HashMap<Date, Weather> ws = WeatherFetcher.Fetch(city);
+	  if(format.equals("csv")){
+		  
+		  return ok(Weather.toCSV(ws));//.as("text/csv");
+	  }	
+	  return ok(new ObjectMapper().writeValueAsString(ws));
   }
-  public static Result predictions(String flightNumber){
+  public  static Result weather(String format, String city, String date) throws ParseException, JsonGenerationException, JsonMappingException, IOException{
+	  Weather w = WeatherFetcher.Fetch(city, new SimpleDateFormat("yyyy-MM-dd").parse(date));
+	  if(format.equals("csv")){
+		  return ok(w.toCSV());
+	  }
+	  return ok(new ObjectMapper().writeValueAsString(w));
+  }
+  public static Result predictions(String airline, String flightNumber, String strDate, String departure, String arrival) throws JsonGenerationException, JsonMappingException, IOException, ParseException{
 	  Prediction p = new Prediction();
-	  
-	  //return ok(p.predict(flightNumber).toString());
-	  return ok(p.predict(flightNumber).toJson());
+	  Date d = new SimpleDateFormat("yyyy-MM-dd").parse(strDate);
+	  return ok( new ObjectMapper().writeValueAsString(p.predict(airline, flightNumber, d, departure, arrival)) );
   }
-  
 }
