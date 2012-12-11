@@ -15,17 +15,25 @@ public class Weather {
 	int code;
 	String description;
 	String icon;
+	int visibility;
+	int pressure;
 	Date date;
-	public Weather(Date date, double temp, double windspeed, int code, String description, String icon){
+	public Weather(Date date, double temp, double windspeed, int visibility, int pressure, int code,String description, String icon){
 		this.date = date;
 		this.temp = temp;
 		this.windspeed = windspeed;
 		this.code = code;
 		this.description = description;
 		this.icon = icon;
+		this.visibility = visibility;
+		this.pressure = pressure;
 	}
-	public Date getDate(){
-		return this.date;
+	public Weather(Date date, double temp, double windspeed, int code, String description, String icon){
+		this(date, temp, windspeed, -1, -1, code, description, icon);
+	}
+	
+	public String getDate(){
+		return this.date.toLocaleString();
 	}
 	public double getTemp(){
 		return this.temp;
@@ -42,6 +50,13 @@ public class Weather {
 	public String getWeatherIcon(){
 		return this.icon;
 	}
+	public int getVisibility(){
+		return this.visibility;
+	}
+	public int getBarometricPressure(){
+		return this.pressure;
+	}
+	
 	public String toString(){
 		return "Temp:" + String.valueOf(this.temp) + "F, windspeed: " + String.valueOf(this.windspeed) + "miles/hr, desc: " + this.description + ", icon: " + this.icon;
 		
@@ -49,13 +64,15 @@ public class Weather {
 	public static String toCSV(HashMap<Date, Weather> ws) throws IntrospectionException{
 		Iterator<Date> it = ws.keySet().iterator();
 		String output = "";
-		output = "'date', 'tempF', 'windSpeed', 'weatherCode', 'weatherDescription', 'weatherIcon'\n";
+		output = "'date', 'tempF', 'windSpeed', 'visibility', 'BarometricPressure','weatherCode', 'weatherDescription', 'weatherIcon'\n";
 		while(it.hasNext()){
 			Date date = it.next();
-			output += "'" + date.toString() + "', ";
+			output += "'" + date.toLocaleString() + "', ";
 			Weather w = ws.get(date);
 			output += w.getTemp() + ", ";
 			output += w.getWindSpeed() + ", ";
+			output += w.getVisibility() + ",";
+			output += w.getBarometricPressure() + ",";
 			output += "'" + w.getWeatherCode() + "', ";
 			output += "'" + w.getWeatherDescription() + "', ";
 			output += "'" + w.getWeatherIcon() + "',";

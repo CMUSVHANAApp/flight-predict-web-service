@@ -76,7 +76,9 @@ public class WeatherFetcher {
             				new Date(),
             				current.getDouble("temp_F"), 
             				current.getDouble("windspeedMiles"), 
-            				current.getInt("weatherCode"), 
+            				current.getInt("visibility"),
+            				current.getInt("pressure"),
+            				current.getInt("weatherCode"),
             				current.getJSONArray("weatherDesc").getJSONObject(0).getString("value"),
             				current.getJSONArray("weatherIconUrl").getJSONObject(0).getString("value")
             				); 
