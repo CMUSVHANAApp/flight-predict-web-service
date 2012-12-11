@@ -45,7 +45,7 @@ public class FlightQuality{
 	public int  getDepartDelay(){
 		return this.departDelay;
 	}
-	public int getArrivalDealy(){
+	public int getArrivalDelay(){
 		return this.arrivalDelay;
 	}
 	
