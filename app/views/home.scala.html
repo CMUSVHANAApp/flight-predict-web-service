@@ -16,6 +16,19 @@
   	margin-top: 30px;
   }
   </style>
+  <script>
+  $(window).load(function(){
+	  $("a").each(function(){
+		var d =  new Date();
+		var strDate = d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
+	  	if(/^http:\/\/flight-prediction\.herokuapp\.com\//.test($(this).attr("href"))){
+	  		$(this).attr("href", $(this).attr("href").replace("2012-12-10",strDate));
+	  		$(this).text($(this).text().replace("2012-12-10",strDate));
+	  	}		
+	  });  
+  });
+  	
+  </script>
   <h1>Usage</h1>
   <h2>Predict Flight Service Quality</h2>
   <ul>
@@ -47,8 +60,8 @@
 			<div class='code'>http://flight-prediction.herokuapp.com/weathers/CityName/Date(.json/csv)</div>
 			e.g.
 			<div>
-				<a href='http://flight-prediction.herokuapp.com/weathers/mountain%20view/2012-12-11.json'>http://flight-prediction.herokuapp.com/weathers/mountain%20view/2012-12-11.json</a><br/>
-				<a href='http://flight-prediction.herokuapp.com/weathers/mountain%20view/2012-12-11.csv'>http://flight-prediction.herokuapp.com/weathers/mountain%20view/2012-12-11.csv</a>
+				<a href='http://flight-prediction.herokuapp.com/weathers/mountain%20view/2012-12-10.json'>http://flight-prediction.herokuapp.com/weathers/mountain%20view/2012-12-10.json</a><br/>
+				<a href='http://flight-prediction.herokuapp.com/weathers/mountain%20view/2012-12-10.csv'>http://flight-prediction.herokuapp.com/weathers/mountain%20view/2012-12-10.csv</a>
 			</div>
 		</div>
 	</li>

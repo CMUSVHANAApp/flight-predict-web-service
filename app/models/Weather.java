@@ -75,7 +75,7 @@ public class Weather {
 			output += w.getBarometricPressure() + ",";
 			output += "'" + w.getWeatherCode() + "', ";
 			output += "'" + w.getWeatherDescription() + "', ";
-			output += "'" + w.getWeatherIcon() + "',";
+			output += "'" + w.getWeatherIcon() ;
 			output += "\n";
 		}
 		return output;
@@ -90,7 +90,7 @@ public class Weather {
 		output += this.getWindSpeed() + ", ";
 		output += "'" + this.getWeatherCode() + "', ";
 		output += "'" + this.getWeatherDescription() + "', ";
-		output += "'" + this.getWeatherIcon() + "',";
+		output += "'" + this.getWeatherIcon() ;
 		output += "\n";
 		return output;
 	}
