@@ -26,8 +26,8 @@ public class FlightQuality{
 	public String getAirline(){
 		return this.airline;
 	}
-	public Date getDate(){
-		return this.date;
+	public String getDate(){
+		return this.date.toGMTString();
 	}
 	public Weather getDepartWeather(){
 		return this.departWeather;
