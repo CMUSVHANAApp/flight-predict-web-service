@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 
 
 
@@ -29,6 +30,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import play.Logger;
+
 
 public class WeatherFetcher {
 	public static void main(String [ ] args){
@@ -38,6 +41,7 @@ public class WeatherFetcher {
 		
 	}
 	public static Weather Fetch(String city, Date date){
+		Logger.warn(date.toLocaleString());
 		HashMap<Date, Weather> ws = Fetch(city);
 		if(ws.containsKey(date)){
 			return ws.get(date);
@@ -85,7 +89,9 @@ public class WeatherFetcher {
             dateWeather.put(new Date(), currentWeather);
             for(int i=0; i< forecasts.length(); i++){
             	JSONObject jw = forecasts.getJSONObject(i);
-            	Date d = new SimpleDateFormat("yyyy-MM-dd").parse(jw.getString("date")); 
+            	SimpleDateFormat ds = new SimpleDateFormat("yyyy-MM-dd");
+            	ds.setTimeZone(TimeZone.getDefault());
+            	Date d = ds.parse(jw.getString("date")); 
             	Weather w = new Weather(
             			d ,
             			(jw.getDouble("tempMaxF") + jw.getDouble("tempMinF")) / 2, 

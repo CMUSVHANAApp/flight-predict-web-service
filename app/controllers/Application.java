@@ -48,7 +48,10 @@ public class Application extends Controller {
   }
   public static Result predictions(String airline, String flightNumber, String strDate, String departure, String arrival) throws JsonGenerationException, JsonMappingException, IOException, ParseException{
 	  Prediction p = new Prediction();
-	  Date d = new SimpleDateFormat("yyyy-MM-dd").parse(strDate);
+	  Date d = new Date();
+	  if(!strDate.equals("")){
+		  d = new SimpleDateFormat("yyyy-MM-dd").parse(strDate);
+	  }
 	  return ok( new ObjectMapper().writeValueAsString(p.predict(airline, flightNumber, d, departure, arrival)) );
   }
 }

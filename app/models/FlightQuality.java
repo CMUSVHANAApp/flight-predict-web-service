@@ -20,8 +20,8 @@ public class FlightQuality{
 		this.departAirport = new City(departure);
 		this.airline = airline;
 		this.arrivalAirport = new City(arrival);
-		this.departWeather = WeatherFetcher.Fetch(departure, d);
-		this.departWeather = WeatherFetcher.Fetch(arrival, d);
+		this.departWeather = WeatherFetcher.Fetch(this.departAirport.getGeoLocation().city, d);
+		this.arrivalWeather = WeatherFetcher.Fetch(this.arrivalAirport.getGeoLocation().city, d);
 	}
 	public String getAirline(){
 		return this.airline;
@@ -48,7 +48,9 @@ public class FlightQuality{
 	public int getArrivalDelay(){
 		return this.arrivalDelay;
 	}
-	
+	public String getFlightNumber(){
+		return this.flightNumber;
+	}
 	public void setDelay(int depart, int arrival){
 		this.departDelay = depart;
 		this.arrivalDelay = arrival;
