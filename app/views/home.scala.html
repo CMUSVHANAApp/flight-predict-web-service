@@ -118,11 +118,35 @@
   <h2>Fetch Flight Information (Currently only support PHL)</h2>
   <ul>
 	<li>
-		<div class='description'>To Fetch Weather forecast</div>
+		<div class='description'>To Fetch Current flight Information</div>
 		<div class='code'>http://flight-prediction.herokuapp.com/flights</div>
 		e.g.
 		<div>
 			<a href='http://flight-prediction.herokuapp.com/flights'>http://flight-prediction.herokuapp.com/flights</a><br/>
+		</div>
+		<div>
+  			<span style="font-size:bold;">Sample Output</span>
+<pre>
+[
+	{
+		flightNumber: "797",
+		departDelay: 0,
+		arrivalDelay: 0,
+		departAirport: {
+			name: "TEL AVIV",
+			geoLocation: null
+		},
+		arrivalAirport: {
+			name: "PHL",
+			geoLocation: null
+		},
+		departWeather: null,
+		arrivalWeather: null,
+		airline: "US Airways",
+		date: "15 Dec 2012 13:20:00 GMT"
+	}
+]
+</pre>
 		</div>
 	</li>  
   </ul>

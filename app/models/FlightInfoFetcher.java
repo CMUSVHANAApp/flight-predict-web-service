@@ -38,7 +38,7 @@ public class FlightInfoFetcher {
 				int diff = 0;
 				SimpleDateFormat format = new SimpleDateFormat("HH:mm a");
 				Date schedule = format.parse(time);
-				if(!Status.equals("Arrived") && !Status.equals("On Time") && !Status.equals("At Gate") && !Status.equals("Customs")){
+				if(!Status.equals("Arrived") && !Status.equals("On Time") && !Status.equals("At Gate") && !Status.equals("Customs") && !Status.equals("Departed") && !Status.equals("Closed")){
 					
 					
 					Date actual = format.parse(Status);
