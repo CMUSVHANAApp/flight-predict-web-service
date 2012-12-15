@@ -15,4 +15,5 @@ dist
 /RUNNING_PID
 *.class
 /.target
-/lib_/
+.DS_Store
+*/.DS_Store

@@ -12,8 +12,13 @@ public class City implements Serializable{
 	protected String name;
 	protected GeoLocation geoLocation;
 	public City(String name){
+		this(name, true);
+	}
+	public City(String name, boolean fetchData){
 		this.name = name;
-		this.geoLocation = GeoLocationFetcher.Fetch(name);
+		if(fetchData){
+			this.geoLocation = GeoLocationFetcher.Fetch(name);
+		}
 	}
 	
 	/* getter & setter */

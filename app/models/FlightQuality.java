@@ -13,15 +13,19 @@ public class FlightQuality{
 	protected Weather arrivalWeather;
 	protected String airline;
 	protected Date date;
-	
 	public FlightQuality(String airline, String flightNumber, Date d, String departure, String arrival){
+		this(airline, flightNumber, d, departure, arrival, true);
+	}
+	public FlightQuality(String airline, String flightNumber, Date d, String departure, String arrival, boolean fetchData){
 		this.flightNumber = flightNumber;
 		this.date = d;
-		this.departAirport = new City(departure);
+		this.departAirport = new City(departure, fetchData);
 		this.airline = airline;
-		this.arrivalAirport = new City(arrival);
-		this.departWeather = WeatherFetcher.Fetch(this.departAirport.getGeoLocation().city, d);
-		this.arrivalWeather = WeatherFetcher.Fetch(this.arrivalAirport.getGeoLocation().city, d);
+		this.arrivalAirport = new City(arrival, fetchData);
+		if(fetchData){
+			this.departWeather = WeatherFetcher.Fetch(this.departAirport.getGeoLocation().city, d);
+			this.arrivalWeather = WeatherFetcher.Fetch(this.arrivalAirport.getGeoLocation().city, d);
+		}
 	}
 	public String getAirline(){
 		return this.airline;
