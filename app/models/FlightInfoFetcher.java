@@ -19,7 +19,7 @@ public class FlightInfoFetcher {
 	public FlightInfoFetcher() throws IOException{
 		
 	}
-	public ArrayList<FlightQuality> fetch() throws IOException, ParseException{
+	public ArrayList<FlightQuality> fetch() throws IOException{
 		Document doc = Jsoup.connect("http://www.phl.org/passengerinfo/Pages/FlightInformation.aspx").get();
 		Elements table = doc.select("#ctl00_m_g_c8b2de17_9e20_49ea_b527_51ac8eed7317_ctl00_flightGrid_ctl00 tbody tr");
 		ArrayList<FlightQuality> fs = new ArrayList<FlightQuality>();
@@ -37,13 +37,19 @@ public class FlightInfoFetcher {
 				int delayArrival=0, delayDeparture=0;
 				int diff = 0;
 				SimpleDateFormat format = new SimpleDateFormat("HH:mm a");
-				Date schedule = format.parse(time);
-				if(!Status.equals("Arrived") && !Status.equals("On Time") && !Status.equals("At Gate") && !Status.equals("Customs") && !Status.equals("Departed") && !Status.equals("Closed")){
-					
-					
-					Date actual = format.parse(Status);
-					diff = (int) ((actual.getTime() - schedule.getTime())/(60*1000));
-					System.out.println("'" + Status+ "'/" + "'" + time + "': " + String.valueOf(diff));
+				Date schedule = new Date(), actual;
+				try {
+					schedule = format.parse(time);
+				
+					if(!Status.equals("Arrived") && !Status.equals("On Time") && !Status.equals("At Gate") && !Status.equals("Customs") && !Status.equals("Departed") && !Status.equals("Closed")){
+						actual = format.parse(Status);
+						diff = (int) ((actual.getTime() - schedule.getTime())/(60*1000));
+						System.out.println("'" + Status+ "'/" + "'" + time + "': " + String.valueOf(diff));
+					}
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					diff = 0;
+					e.printStackTrace();
 				}
 				if(Direction == "Departure"){
 					departure = "PHL";
