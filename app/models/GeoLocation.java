@@ -24,11 +24,16 @@ public class GeoLocation implements Serializable {
 	protected String zipcode;
 	protected double longitude;
 	protected double latitude;
-	public GeoLocation(String city, String zipcode, double longtitude, double latitude){
-		this.longitude = longtitude;
+	protected String address;
+	public GeoLocation(String address, String city, String zipcode, double longitude, double latitude){
+		this.longitude = longitude;
 		this.latitude = latitude;
+		this.address = address;
 		this.city = city;
 		this.zipcode = zipcode;
+	}
+	public GeoLocation(String city, String zipcode, double longtitude, double latitude){
+		this("", city, zipcode, longtitude, latitude);
 	}
 	public GeoLocation(double longtitude, double latitude){
 		this("","", longtitude, latitude);
@@ -44,6 +49,9 @@ public class GeoLocation implements Serializable {
 	}
 	public double getLatitude(){
 		return this.latitude;
+	}
+	public String getAddress(){
+		return this.address;
 	}
 	public static GeoLocation getGeoLocation(){
 		Random random = new Random();
