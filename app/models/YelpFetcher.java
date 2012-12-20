@@ -118,12 +118,35 @@ class YelpBizDeserializer extends JsonDeserializer<YelpRecommendations> {
 		for (int i = 0; i < node.size(); i++) {
 			JsonNode business = node.get(i);
 			String name = business.get("name").asText();
-			double rating = business.get("rating").asDouble();
-			String address = business.get("location").get("address").get(0)
-					.asText();
-			String city = business.get("location").get("city").asText();
-			String zipcode = business.get("location").get("postal_code")
-					.asText();
+			double rating  = 0;
+			try{
+				rating = business.get("rating").asDouble();
+			}
+			catch(Exception e){
+				
+			}
+			String address ="";
+			try{
+				address= business.get("location").get("address").get(0).asText();
+			}
+			catch(Exception e){
+				
+			}
+			String city ="";
+			try{
+				city = business.get("location").get("city").asText();
+			}
+			catch (Exception e){
+				
+			}
+			String zipcode ="";
+			try{
+				zipcode = business.get("location").get("postal_code").asText();
+			}
+			catch(Exception e){
+				
+			}
+					
 			double longitude = business.get("location").get("coordinate")
 					.get("longitude").asDouble();
 			double latitude = business.get("location").get("coordinate")
