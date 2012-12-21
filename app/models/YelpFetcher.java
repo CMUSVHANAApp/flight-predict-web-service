@@ -145,7 +145,13 @@ class YelpBizDeserializer extends JsonDeserializer<YelpRecommendations> {
 			catch (Exception e){
 				
 			}
-			String category = business.get("categories").get(0).get(0).asText();
+			String category = "";
+			try{
+				category= business.get("categories").get(0).get(0).asText();
+			}
+			catch (Exception e){
+				
+			}
 			double longitude = business.get("location").get("coordinate")
 					.get("longitude").asDouble();
 			double latitude = business.get("location").get("coordinate")
