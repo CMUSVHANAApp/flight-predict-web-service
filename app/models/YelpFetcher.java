@@ -25,10 +25,10 @@ import org.scribe.oauth.OAuthService;
 public class YelpFetcher {
 	OAuthService service;
 	Token accessToken;
-	static String consumerKey = "s2faseG3-l7IW1DVixnOzw";
-	static String consumerSecret = "OqGbhwzXGR-kOkS2AQEszdSWW_8";
-	static String token = "gzV6x7e3rlelUrpYjunWCq6Qe3ekJsyX";
-	static String tokenSecret = "C0f-55BXbqy3FJdu1g7AjxEKjRc";
+	static String consumerKey = "998Kp047_VIoM2apo_W0Lg"; //"s2faseG3-l7IW1DVixnOzw";
+	static String consumerSecret = "_xeHwFX16MyTtfFU38K-NKGQZEk";//"OqGbhwzXGR-kOkS2AQEszdSWW_8";
+	static String token = "OH0HqT3V0t86Aoxqe6mloQXsmKwIgBlg";//"gzV6x7e3rlelUrpYjunWCq6Qe3ekJsyX";
+	static String tokenSecret = "3QPL25CdQ8F-0Lkx9hxLOO20hPE";//"C0f-55BXbqy3FJdu1g7AjxEKjRc";
 
 	public YelpFetcher(String consumerKey, String consumerSecret, String token,
 			String tokenSecret) {
