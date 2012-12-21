@@ -88,6 +88,7 @@ public class Prediction {
 			arrivalDelay = random.nextInt(120);
 		}
 		quality.setDelay(departDelay, arrivalDelay);
+		quality.fetchRecommendations();
 		return quality;
 	}
 }
