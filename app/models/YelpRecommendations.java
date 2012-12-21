@@ -26,17 +26,22 @@ class YelpRecommendations {
 }
 
 class YelpBiz {
+	protected double distance;
 	protected double rating;
 	protected String name;
+	protected String category;
 	protected GeoLocation geoLocation;
 
-	public YelpBiz(String name, double latitude, double longitude,
+	public YelpBiz(String name, String category, double latitude, double longitude,
 			String address, String city, String zipcode) {
 		this.name = name;
+		this.category = category;
 		this.geoLocation = new GeoLocation(address, city, zipcode, longitude,
 				latitude);
 	}
-
+	public String getCategory(){
+		return this.category;
+	}
 	public String getName() {
 		return this.name;
 	}
@@ -47,7 +52,12 @@ class YelpBiz {
 	public double getRating() {
 		return this.rating;
 	}
-
+	public double getDistance() {
+		return this.distance;
+	}
+	public void setDistance(double distance) {
+		this.distance = distance;
+	}
 	public void setRating(double rating) {
 		this.rating = rating;
 	}

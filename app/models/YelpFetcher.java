@@ -25,6 +25,10 @@ import org.scribe.oauth.OAuthService;
 public class YelpFetcher {
 	OAuthService service;
 	Token accessToken;
+	static String consumerKey = "s2faseG3-l7IW1DVixnOzw";
+	static String consumerSecret = "OqGbhwzXGR-kOkS2AQEszdSWW_8";
+	static String token = "gzV6x7e3rlelUrpYjunWCq6Qe3ekJsyX";
+	static String tokenSecret = "C0f-55BXbqy3FJdu1g7AjxEKjRc";
 
 	public YelpFetcher(String consumerKey, String consumerSecret, String token,
 			String tokenSecret) {
@@ -44,30 +48,25 @@ public class YelpFetcher {
 	 *            Longitude
 	 * @return JSON string response
 	 */
-	public String search(String term, double latitude, double longitude) {
-		OAuthRequest request = new OAuthRequest(Verb.GET,
-				"http://api.yelp.com/v2/search");
+	public static YelpRecommendations fetch(String term, GeoLocation city) {
+		OAuthRequest request = new OAuthRequest(Verb.GET, "http://api.yelp.com/v2/search");
 		request.addQuerystringParameter("term", term);
-		request.addQuerystringParameter("ll", latitude + "," + longitude);
-		this.service.signRequest(this.accessToken, request);
-		Response response = request.send();
-
-		return response.getBody();
+		request.addQuerystringParameter("ll", city.latitude + "," + city.longitude);
+		return fetch(request);
 	}
-
 	public static YelpRecommendations fetch(String term, String city) {
-		String consumerKey = "s2faseG3-l7IW1DVixnOzw";
-		String consumerSecret = "OqGbhwzXGR-kOkS2AQEszdSWW_8";
-		String token = "gzV6x7e3rlelUrpYjunWCq6Qe3ekJsyX";
-		String tokenSecret = "C0f-55BXbqy3FJdu1g7AjxEKjRc";
 		OAuthRequest request = new OAuthRequest(Verb.GET, "http://api.yelp.com/v2/search");
 		request.addQuerystringParameter("term", term);
 		request.addQuerystringParameter("location", city);
+		return fetch(request);
+	}
+	protected static YelpRecommendations fetch(OAuthRequest request) {
 		OAuthService service = new ServiceBuilder().provider(YelpApi2.class).apiKey(consumerKey).apiSecret(consumerSecret).build();
 		Token accessToken = new Token(token, tokenSecret);
 		service.signRequest(accessToken, request);
 		Response response = request.send();
 		ObjectMapper objectMapper = new ObjectMapper();
+		System.out.println(response.getBody());
 		YelpRecommendations recommendations = null;
 		try {
 			recommendations = objectMapper.readValue(response.getBody(),
@@ -93,14 +92,7 @@ public class YelpFetcher {
 		String consumerSecret = "OqGbhwzXGR-kOkS2AQEszdSWW_8";
 		String token = "gzV6x7e3rlelUrpYjunWCq6Qe3ekJsyX";
 		String tokenSecret = "C0f-55BXbqy3FJdu1g7AjxEKjRc";
-/*
-		YelpFetcher yelp = new YelpFetcher(consumerKey, consumerSecret, token,
-				tokenSecret);
-		String response = yelp.search("restaurants", 30.361471, -87.164326);
-		
-		System.out.println(response);
-		*/
-		YelpFetcher.fetch("restaurant", "94086");
+		System.out.println(YelpFetcher.fetch("restaurant", "94086").getRecommendations());
 		
 	}
 
@@ -110,11 +102,11 @@ class YelpBizDeserializer extends JsonDeserializer<YelpRecommendations> {
 
 	@Override
 	public YelpRecommendations deserialize(JsonParser jsonParser,
-			DeserializationContext deserializationContext) throws IOException,
-			JsonProcessingException {
+			DeserializationContext deserializationContext) throws IOException {
 		ObjectCodec oc = jsonParser.getCodec();
 		JsonNode node = oc.readTree(jsonParser).get("businesses");
 		YelpRecommendations yelpRecommendations = new YelpRecommendations("");
+		if(node == null) return yelpRecommendations;
 		for (int i = 0; i < node.size(); i++) {
 			JsonNode business = node.get(i);
 			String name = business.get("name").asText();
@@ -146,14 +138,22 @@ class YelpBizDeserializer extends JsonDeserializer<YelpRecommendations> {
 			catch(Exception e){
 				
 			}
-					
+			double distance =0;
+			try{
+				distance = business.get("distance").asDouble() * 0.000621371;
+			}
+			catch (Exception e){
+				
+			}
+			String category = business.get("categories").get(0).get(0).asText();
 			double longitude = business.get("location").get("coordinate")
 					.get("longitude").asDouble();
 			double latitude = business.get("location").get("coordinate")
 					.get("latitude").asDouble();
-			YelpBiz b = new YelpBiz(name, latitude, longitude, address, city,
+			YelpBiz b = new YelpBiz(name, category, latitude, longitude, address, city,
 					zipcode);
 			b.setRating(rating);
+			b.setDistance(distance);
 			yelpRecommendations.addBiz(b);
 		}
 		return yelpRecommendations;

@@ -33,6 +33,7 @@ public class Application extends Controller {
   public static Result index() {
     return ok(home.render());
   }
+  
   public static Result weathers(String format, String city) throws JsonGenerationException, JsonMappingException, IOException, IntrospectionException{
 	  
 	  HashMap<Date, Weather> ws = WeatherFetcher.Fetch(city);
@@ -63,6 +64,7 @@ public class Application extends Controller {
 	  }
 	  return ok( new ObjectMapper().writeValueAsString(p.predict(airline, flightNumber, d, departure, arrival)) );
   }
+  
   public static Result flights() throws JsonGenerationException, JsonMappingException, IOException, ParseException{
 	  return ok(new ObjectMapper().writeValueAsString(new FlightInfoFetcher().fetch()));
   }
