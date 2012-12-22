@@ -72,7 +72,23 @@ public class Prediction {
 		return;
 	}
 	public FlightQuality predict(String airline, String flightNumber, Date d, String departure, String arrival){
-		FlightQuality quality =  new FlightQuality(airline, flightNumber, d, departure, arrival);
+		FlightQuality quality = FlightInfoFetcher.fetch(flightNumber);  
+		if(quality == null){
+			System.out.println("");
+			quality = new FlightQuality(airline, flightNumber, d, departure, arrival);
+		}
+		quality.setAirline(airline);
+		quality.setDepartureAirport(departure);
+		quality.setArrivalAirport(arrival);
+		quality.fetchWeather();
+
+		
+		quality.setDelay(makePrediction(quality.getDepartureDateTime()), makePrediction(quality.getArrivalDateTime()));
+		
+		quality.fetchRecommendations();
+		return quality;
+	}
+	protected int makePrediction(Date d){
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(d);
 		double p = 0;
@@ -80,15 +96,7 @@ public class Prediction {
 		p += delayWeek.get(calendar.get(Calendar.DAY_OF_WEEK) - 1 );
 		p += delayDate.get(calendar.get(Calendar.DATE));
 		p += delayTime.get(calendar.get(Calendar.HOUR_OF_DAY)*10 + (calendar.get(Calendar.MINUTE)/30) * 5 );
-		int departDelay = (int) (p/4);
+		return (int) (p/4);
 
-		Random random = new Random();
-		int arrivalDelay = 0;
-		if(random.nextBoolean()){
-			arrivalDelay = random.nextInt(120);
-		}
-		quality.setDelay(departDelay, arrivalDelay);
-		quality.fetchRecommendations();
-		return quality;
 	}
 }

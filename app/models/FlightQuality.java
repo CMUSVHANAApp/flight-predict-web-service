@@ -14,7 +14,14 @@ public class FlightQuality{
 	protected Weather arrivalWeather;
 	protected String airline;
 	protected Date date;
+	protected Date arrivalDate;
 	protected HashMap<String, YelpRecommendations> recommendations;
+	public FlightQuality(String flightNumber, Date arrivalDate, Date departureDate){
+		this.flightNumber = flightNumber;
+		this.arrivalDate = arrivalDate;
+		this.date = departureDate;
+		this.recommendations = new HashMap<String, YelpRecommendations>();
+	}
 	public FlightQuality(String airline, String flightNumber, Date d, String departure, String arrival){
 		this(airline, flightNumber, d, departure, arrival, true);
 	}
@@ -22,14 +29,20 @@ public class FlightQuality{
 		this.flightNumber = flightNumber;
 		this.date = d;
 		this.departAirport = new City(departure, fetchData);
+		
+		this.arrivalDate = d;
 		this.airline = airline;
 		this.arrivalAirport = new City(arrival, fetchData);
 		this.recommendations = new HashMap<String, YelpRecommendations>();
-		if(fetchData){
-			this.departWeather = WeatherFetcher.Fetch(this.departAirport.getGeoLocation().city, d);
-			this.arrivalWeather = WeatherFetcher.Fetch(this.arrivalAirport.getGeoLocation().city, d);
-		}
-		
+	}
+	public Date getArrivalDateTime(){
+		return this.arrivalDate;
+	}
+	public Date getDepartureDateTime(){
+		return this.date;
+	}
+	public String getArrivalDate(){
+		return this.arrivalDate.toGMTString();
 	}
 	public String getAirline(){
 		return this.airline;
@@ -66,6 +79,19 @@ public class FlightQuality{
 		this.departDelay = depart;
 		this.arrivalDelay = arrival;
 		
+	}
+	public void setDepartureAirport(String airport){
+		this.departAirport = new City(airport);
+	}
+	public void setArrivalAirport(String airport){
+		this.arrivalAirport = new City(airport);
+	}
+	public void setAirline(String airline){
+		this.airline = airline;
+	}
+	public void fetchWeather(){
+		this.departWeather = WeatherFetcher.Fetch(this.departAirport.getGeoLocation().city, this.date);
+		this.arrivalWeather = WeatherFetcher.Fetch(this.arrivalAirport.getGeoLocation().city, this.arrivalDate);
 	}
 	public void fetchRecommendations(){
 

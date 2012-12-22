@@ -14,63 +14,60 @@ import org.jsoup.select.Elements;
 
 public class FlightInfoFetcher {
 	public static void main(String [ ] args) throws IOException, ParseException{
-		System.out.println(new FlightInfoFetcher().fetch());
+		 FlightInfoFetcher.fetch("UAL937");
 	}
 	public FlightInfoFetcher() throws IOException{
 		
 	}
-	public ArrayList<FlightQuality> fetch() throws IOException{
-		Document doc = Jsoup.connect("http://www.phl.org/passengerinfo/Pages/FlightInformation.aspx").get();
-		Elements table = doc.select("#ctl00_m_g_c8b2de17_9e20_49ea_b527_51ac8eed7317_ctl00_flightGrid_ctl00 tbody tr");
-		ArrayList<FlightQuality> fs = new ArrayList<FlightQuality>();
-		for (Element tr : table) {
-			
-			if(tr.hasClass("rgRow") || tr.hasClass("rgAltRow")){
-				String airline = tr.child(0).child(0).attr("title");
-				String flightNumber = tr.child(1).text();
-				String City = tr.child(2).text();
-				String time = tr.child(3).text();
-				String gate = tr.child(4).text();
-				String Direction = tr.child(5).text();
-				String Status = tr.child(6).text();
-				String arrival = "", departure = "";
-				int delayArrival=0, delayDeparture=0;
-				int diff = 0;
-				SimpleDateFormat format = new SimpleDateFormat("HH:mm a");
-				Date schedule = new Date(), actual;
-				try {
-					schedule = format.parse(time);
-				
-					if(!Status.equals("Arrived") && !Status.equals("On Time") && !Status.equals("At Gate") && !Status.equals("Customs") && !Status.equals("Departed") && !Status.equals("Closed")){
-						actual = format.parse(Status);
-						diff = (int) ((actual.getTime() - schedule.getTime())/(60*1000));
-						System.out.println("'" + Status+ "'/" + "'" + time + "': " + String.valueOf(diff));
-					}
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					diff = 0;
-					e.printStackTrace();
-				}
-				if(Direction == "Departure"){
-					departure = "PHL";
-					arrival = City;
-					delayDeparture = diff;
-				}
-				else{
-					arrival = "PHL";
-					departure = City;
-					delayArrival = diff;
-				}	
-				Date date = new Date();
-				date.setHours(schedule.getHours());
-				date.setMinutes(schedule.getMinutes());
-				date.setSeconds(0);
-				FlightQuality f = new FlightQuality(airline, flightNumber, date , departure, arrival, false);
-				f.setDelay(delayDeparture, delayArrival);
-				fs.add(f);
-			}
+	public static FlightQuality fetch(String flightNumber){
+		Document doc;
+		try {
+			doc = Jsoup.connect("http://travel.flightexplorer.com/FlightTracker/" + flightNumber).get();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
 		}
+		Elements table = doc.select("#FastTrack1_resultGrid tr");
 		
-		return fs;
+		int i=0;
+		for (Element tr : table) {
+			//skip first row
+			if (i==0) {
+				i+= 1;
+				continue;
+			}
+			if(tr.children().size() < 6){
+				break;
+			}
+			String flightID = tr.child(0).child(0).text();
+			String departCity = tr.child(1).child(0).text();
+			String arrivalCity = tr.child(2).child(0).text();
+			SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy hh:mma zzz");
+			Date departureTime = null, arrivalTime = null;
+			try {
+				departureTime = format.parse(tr.child(3).text());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				departureTime = new Date();
+				
+			}
+			try {
+				arrivalTime = format.parse(tr.child(4).text());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				arrivalTime = new Date();
+				e.printStackTrace();
+			}
+			String aircraft = tr.child(5).text();
+			String status = tr.child(6).text();
+			
+			//System.out.println("aircraft");
+			return new FlightQuality(flightID, departureTime, arrivalTime);
+		}
+		return null;
+		
+
 	}
 }

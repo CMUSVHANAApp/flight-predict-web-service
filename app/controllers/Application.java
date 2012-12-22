@@ -14,7 +14,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import models.FlightInfoFetcher;
+import models.AirportInfoFetcher;
 import models.GeoLocation;
 import models.Prediction;
 import models.WeatherFetcher;
@@ -66,6 +66,6 @@ public class Application extends Controller {
   }
   
   public static Result flights() throws JsonGenerationException, JsonMappingException, IOException, ParseException{
-	  return ok(new ObjectMapper().writeValueAsString(new FlightInfoFetcher().fetch()));
+	  return ok(new ObjectMapper().writeValueAsString(new AirportInfoFetcher().fetch()));
   }
 }
