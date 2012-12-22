@@ -91,7 +91,7 @@ public class FlightQuality{
 	}
 	public void fetchWeather(){
 		this.departWeather = WeatherFetcher.Fetch(this.departAirport.getGeoLocation().city, this.date);
-		this.arrivalWeather = WeatherFetcher.Fetch(this.arrivalAirport.getGeoLocation().city, this.arrivalDate);
+		this.arrivalWeather = WeatherFetcher.Fetch(this.arrivalAirport.getGeoLocation().city, this.date);
 	}
 	public void fetchRecommendations(){
 
