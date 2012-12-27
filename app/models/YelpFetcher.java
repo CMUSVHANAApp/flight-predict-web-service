@@ -25,16 +25,28 @@ import org.scribe.oauth.OAuthService;
 public class YelpFetcher {
 	OAuthService service;
 	Token accessToken;
-	static String consumerKey = "998Kp047_VIoM2apo_W0Lg"; //"s2faseG3-l7IW1DVixnOzw";
-	static String consumerSecret = "_xeHwFX16MyTtfFU38K-NKGQZEk";//"OqGbhwzXGR-kOkS2AQEszdSWW_8";
+	static String consumerKey = "998Kp047_VIoM2apo_W0Lg"; 
+	static String consumerKey2 = "s2faseG3-l7IW1DVixnOzw";
+	
+	static String consumerSecret = "_xeHwFX16MyTtfFU38K-NKGQZEk"; 
+	static String consumerSecret2 = "OqGbhwzXGR-kOkS2AQEszdSWW_8";
+	
 	static String token = "OH0HqT3V0t86Aoxqe6mloQXsmKwIgBlg";//"gzV6x7e3rlelUrpYjunWCq6Qe3ekJsyX";
+	static String token2 = "gzV6x7e3rlelUrpYjunWCq6Qe3ekJsyX";
 	static String tokenSecret = "3QPL25CdQ8F-0Lkx9hxLOO20hPE";//"C0f-55BXbqy3FJdu1g7AjxEKjRc";
+	static String tokenSecret2 = "C0f-55BXbqy3FJdu1g7AjxEKjRc";
 
 	public YelpFetcher(String consumerKey, String consumerSecret, String token,
 			String tokenSecret) {
 		this.service = new ServiceBuilder().provider(YelpApi2.class)
 				.apiKey(consumerKey).apiSecret(consumerSecret).build();
 		this.accessToken = new Token(token, tokenSecret);
+	}
+	public void reset(){
+		this.service = new ServiceBuilder().provider(YelpApi2.class)
+				.apiKey(consumerKey2).apiSecret(consumerSecret2).build();
+		this.accessToken = new Token(token2, tokenSecret2);
+		
 	}
 
 	/**
@@ -52,6 +64,10 @@ public class YelpFetcher {
 		OAuthRequest request = new OAuthRequest(Verb.GET, "http://api.yelp.com/v2/search");
 		request.addQuerystringParameter("term", term);
 		request.addQuerystringParameter("ll", city.latitude + "," + city.longitude);
+		YelpRecommendations rs = fetch(request);
+		if(rs.getRecommendations().size() == 0){
+			
+		}
 		return fetch(request);
 	}
 	public static YelpRecommendations fetch(String term, String city) {
@@ -61,9 +77,14 @@ public class YelpFetcher {
 		return fetch(request);
 	}
 	protected static YelpRecommendations fetch(OAuthRequest request) {
-		OAuthService service = new ServiceBuilder().provider(YelpApi2.class).apiKey(consumerKey).apiSecret(consumerSecret).build();
-		Token accessToken = new Token(token, tokenSecret);
-		service.signRequest(accessToken, request);
+		//OAuthService service = new ServiceBuilder().provider(YelpApi2.class).apiKey(consumerKey).apiSecret(consumerSecret).build();
+		//Token accessToken = new Token(token, tokenSecret);
+		//service.signRequest(accessToken, request);
+		
+		OAuthService service2 = new ServiceBuilder().provider(YelpApi2.class).apiKey(consumerKey2).apiSecret(consumerSecret2).build();
+		Token accessToken2 = new Token(token2, tokenSecret2);
+		service2.signRequest(accessToken2, request);
+		
 		Response response = request.send();
 		ObjectMapper objectMapper = new ObjectMapper();
 		YelpRecommendations recommendations = null;
