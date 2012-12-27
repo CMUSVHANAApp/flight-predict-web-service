@@ -3,13 +3,33 @@ package models;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class Weather {
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.ObjectCodec;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.map.DeserializationContext;
+import org.codehaus.jackson.map.JsonDeserializer;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+public @JsonDeserialize(using = Weather.class)
+@JsonIgnoreProperties(ignoreUnknown=true)
+class Weather extends JsonDeserializer<Weather>{
 	double temp; // in F
 	double windspeed; // in miles
 	int code;
@@ -18,6 +38,9 @@ public class Weather {
 	int visibility;
 	int pressure;
 	Date date;
+	public Weather(){
+		
+	}
 	public Weather(Date date, double temp, double windspeed, int visibility, int pressure, int code,String description, String icon){
 		this.date = date;
 		this.temp = temp;
@@ -93,6 +116,12 @@ public class Weather {
 		output += "'" + this.getWeatherIcon() ;
 		output += "\n";
 		return output;
+	}
+	@Override
+	public Weather deserialize(JsonParser jsonParser, DeserializationContext arg1)
+			throws IOException, JsonProcessingException {
+		
+		return null;
 	}
 
 }

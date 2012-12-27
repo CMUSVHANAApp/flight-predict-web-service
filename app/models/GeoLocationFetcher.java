@@ -39,7 +39,7 @@ import com.avaje.ebean.text.json.JsonElement;
 
 public class GeoLocationFetcher {
 	public static void main(String [ ] args){
-		String city = "SFO";
+		String city = "PHL";
 		System.out.println("geo of " + city + ":");
 		System.out.println(GeoLocationFetcher.Fetch(city));
 		
@@ -56,6 +56,7 @@ public class GeoLocationFetcher {
             // Create a response handler
             ResponseHandler<String> responseHandler = new BasicResponseHandler();
             String responseBody = httpclient.execute(httpget, responseHandler);
+            System.out.println(responseBody);
             ObjectMapper objectMapper = new ObjectMapper();  
             try  
             {  
@@ -90,7 +91,6 @@ class GeoLocationDeserializer extends JsonDeserializer<GeoLocation> {
 	public GeoLocation deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
 			throws IOException, JsonProcessingException {
 
-		
 		ObjectCodec oc = jsonParser.getCodec();
 		JsonNode node = oc.readTree(jsonParser).get("results").get(0);
 		JsonNode geometry = node.get("geometry").get("location");
@@ -100,7 +100,7 @@ class GeoLocationDeserializer extends JsonDeserializer<GeoLocation> {
 		for(int i=0;i<address.size();i++){
 			JsonNode component = address.get(i);
 			String types = component.get("types").get(0).asText();
-			if(types.equals("administrative_area_level_2")){
+			if(types.equals("administrative_area_level_2") || types.equals("locality")){
 				city = component.get("long_name").asText();
 			}
 			if(types.equals("administrative_area_level_1")){

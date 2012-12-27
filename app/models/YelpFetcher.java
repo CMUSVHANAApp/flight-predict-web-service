@@ -66,7 +66,6 @@ public class YelpFetcher {
 		service.signRequest(accessToken, request);
 		Response response = request.send();
 		ObjectMapper objectMapper = new ObjectMapper();
-		System.out.println(response.getBody());
 		YelpRecommendations recommendations = null;
 		try {
 			recommendations = objectMapper.readValue(response.getBody(),
