@@ -48,7 +48,12 @@ public class WeatherFetcher {
 	}
 
 	public static Weather Fetch(String city, Date date) {
-		if (date.before(new Date())) {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, -1);
+	  
+		
+		Date yesterday = cal.getTime();
+		if (date.before(yesterday)) {
 			City c = new City(city);
 			Weather w = FetchHistory(c, date);
 			return w;
