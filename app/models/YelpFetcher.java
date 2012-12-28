@@ -65,10 +65,7 @@ public class YelpFetcher {
 		request.addQuerystringParameter("term", term);
 		request.addQuerystringParameter("ll", city.latitude + "," + city.longitude);
 		YelpRecommendations rs = fetch(request);
-		if(rs.getRecommendations().size() == 0){
-			
-		}
-		return fetch(request);
+		return rs;
 	}
 	public static YelpRecommendations fetch(String term, String city) {
 		OAuthRequest request = new OAuthRequest(Verb.GET, "http://api.yelp.com/v2/search");
@@ -77,14 +74,9 @@ public class YelpFetcher {
 		return fetch(request);
 	}
 	protected static YelpRecommendations fetch(OAuthRequest request) {
-		//OAuthService service = new ServiceBuilder().provider(YelpApi2.class).apiKey(consumerKey).apiSecret(consumerSecret).build();
-		//Token accessToken = new Token(token, tokenSecret);
-		//service.signRequest(accessToken, request);
-		
-		OAuthService service2 = new ServiceBuilder().provider(YelpApi2.class).apiKey(consumerKey2).apiSecret(consumerSecret2).build();
-		Token accessToken2 = new Token(token2, tokenSecret2);
-		service2.signRequest(accessToken2, request);
-		
+		OAuthService service = new ServiceBuilder().provider(YelpApi2.class).apiKey(consumerKey2).apiSecret(consumerSecret2).build();
+		Token accessToken = new Token(token2, tokenSecret2);
+		service.signRequest(accessToken, request);
 		Response response = request.send();
 		ObjectMapper objectMapper = new ObjectMapper();
 		YelpRecommendations recommendations = null;
