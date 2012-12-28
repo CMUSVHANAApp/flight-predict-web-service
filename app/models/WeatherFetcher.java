@@ -43,7 +43,7 @@ public class WeatherFetcher {
 		String city = "Mountain View, CA+States";
 		System.out.println("Weather of " + city + ":");
 		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DATE, -5);
+		cal.add(Calendar.DATE, -1);
 		System.out.println(WeatherFetcher.Fetch(city,  cal.getTime()));
 	}
 
@@ -60,6 +60,7 @@ public class WeatherFetcher {
 		} else {
 			Logger.warn(date.toLocaleString());
 			HashMap<Date, Weather> ws = Fetch(city);
+			Date d = new Date(date.getYear(), date.getMonth(), date.getDate(), 0, 0);
 			if (ws.containsKey(date)) {
 				return ws.get(date);
 			}
@@ -174,7 +175,7 @@ public class WeatherFetcher {
 							.getString("value"), current
 							.getJSONArray("weatherIconUrl").getJSONObject(0)
 							.getString("value"));
-			dateWeather.put(new Date(), currentWeather);
+			dateWeather.put(new Date(new Date().getYear(), new Date().getMonth(), new Date().getDate()), currentWeather);
 			for (int i = 0; i < forecasts.length(); i++) {
 				JSONObject jw = forecasts.getJSONObject(i);
 				SimpleDateFormat ds = new SimpleDateFormat("yyyy-MM-dd");

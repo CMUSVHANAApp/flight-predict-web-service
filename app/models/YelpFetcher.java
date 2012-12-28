@@ -131,7 +131,7 @@ class YelpBizDeserializer extends JsonDeserializer<YelpRecommendations> {
 			}
 			String address ="";
 			try{
-				address= business.get("location").get("address").get(0).asText();
+				address= business.get("location").get("display_address").get(0).asText();
 			}
 			catch(Exception e){
 				
@@ -164,6 +164,13 @@ class YelpBizDeserializer extends JsonDeserializer<YelpRecommendations> {
 			catch (Exception e){
 				
 			}
+			String phone = "";
+			try{
+				phone = business.get("phone").asText();
+			}
+			catch (Exception e){
+				
+			}
 			double longitude = business.get("location").get("coordinate")
 					.get("longitude").asDouble();
 			double latitude = business.get("location").get("coordinate")
@@ -172,6 +179,7 @@ class YelpBizDeserializer extends JsonDeserializer<YelpRecommendations> {
 					zipcode);
 			b.setRating(rating);
 			b.setDistance(distance);
+			b.setPhone(phone);
 			yelpRecommendations.addBiz(b);
 		}
 		return yelpRecommendations;

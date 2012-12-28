@@ -30,6 +30,7 @@ class YelpBiz {
 	protected double rating;
 	protected String name;
 	protected String category;
+	protected String phone;
 	protected GeoLocation geoLocation;
 
 	public YelpBiz(String name, String category, double latitude, double longitude,
@@ -44,6 +45,9 @@ class YelpBiz {
 	}
 	public String getName() {
 		return this.name;
+	}
+	public String getPhone(){
+		return this.phone;
 	}
 
 	public GeoLocation getGeoLocation() {
@@ -60,5 +64,8 @@ class YelpBiz {
 	}
 	public void setRating(double rating) {
 		this.rating = rating;
+	}
+	public void setPhone(String phone){
+		this.phone = phone;
 	}
 }

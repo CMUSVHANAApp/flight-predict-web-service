@@ -1,8 +1,10 @@
 package models;
 
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Random;
 
 public class FlightQuality{
 	protected String flightNumber;
@@ -30,7 +32,14 @@ public class FlightQuality{
 		this.date = d;
 		this.departAirport = new City(departure, fetchData);
 		
-		this.arrivalDate = d;
+		Calendar cal = Calendar.getInstance();
+		cal.set(d.getYear(), d.getMonth(), d.getDate());
+		
+		Random r = new Random();
+		cal.add(Calendar.HOUR, r.nextInt(8));
+		cal.add(Calendar.MINUTE, r.nextInt(60));
+		
+		this.arrivalDate = cal.getTime();
 		this.airline = airline;
 		this.arrivalAirport = new City(arrival, fetchData);
 		this.recommendations = new HashMap<String, YelpRecommendations>();

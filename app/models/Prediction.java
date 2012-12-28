@@ -76,12 +76,13 @@ public class Prediction {
 		if(quality == null){
 			System.out.println("");
 			quality = new FlightQuality(airline, flightNumber, d, departure, arrival);
+		
 		}
 		quality.setAirline(airline);
 		quality.setDepartureAirport(departure);
 		quality.setArrivalAirport(arrival);
 		quality.fetchWeather();
-
+		
 		
 		quality.setDelay(makePrediction(quality.getDepartureDateTime()), makePrediction(quality.getArrivalDateTime()));
 		
