@@ -64,6 +64,8 @@ public class YelpFetcher {
 		OAuthRequest request = new OAuthRequest(Verb.GET, "http://api.yelp.com/v2/search");
 		request.addQuerystringParameter("term", term);
 		request.addQuerystringParameter("ll", city.latitude + "," + city.longitude);
+		request.addQuerystringParameter("sort", "1");
+		request.addQuerystringParameter("limit", "4");
 		YelpRecommendations rs = fetch(request);
 		return rs;
 	}
@@ -71,6 +73,7 @@ public class YelpFetcher {
 		OAuthRequest request = new OAuthRequest(Verb.GET, "http://api.yelp.com/v2/search");
 		request.addQuerystringParameter("term", term);
 		request.addQuerystringParameter("location", city);
+		request.addQuerystringParameter("limit", "4");
 		return fetch(request);
 	}
 	protected static YelpRecommendations fetch(OAuthRequest request) {

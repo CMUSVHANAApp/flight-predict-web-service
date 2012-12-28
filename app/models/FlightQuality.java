@@ -33,10 +33,14 @@ public class FlightQuality{
 		this.departAirport = new City(departure, fetchData);
 		
 		Calendar cal = Calendar.getInstance();
-		cal.set(d.getYear(), d.getMonth(), d.getDate());
-		
+		cal.setTime(d);
 		Random r = new Random();
-		cal.add(Calendar.HOUR, r.nextInt(8));
+		cal.set(Calendar.HOUR, r.nextInt(20));
+		cal.set(Calendar.MINUTE, r.nextInt(60));
+		this.date = cal.getTime();
+		
+		
+		cal.add(Calendar.HOUR, r.nextInt(23));
 		cal.add(Calendar.MINUTE, r.nextInt(60));
 		
 		this.arrivalDate = cal.getTime();
