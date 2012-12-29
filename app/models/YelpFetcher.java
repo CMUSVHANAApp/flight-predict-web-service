@@ -1,8 +1,12 @@
 package models;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
+import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
@@ -22,70 +26,105 @@ import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
-public class YelpFetcher {
-	OAuthService service;
-	Token accessToken;
-	static String consumerKey = "998Kp047_VIoM2apo_W0Lg"; 
-	static String consumerKey2 = "s2faseG3-l7IW1DVixnOzw";
-	
-	static String consumerSecret = "_xeHwFX16MyTtfFU38K-NKGQZEk"; 
-	static String consumerSecret2 = "OqGbhwzXGR-kOkS2AQEszdSWW_8";
-	
-	static String token = "OH0HqT3V0t86Aoxqe6mloQXsmKwIgBlg";//"gzV6x7e3rlelUrpYjunWCq6Qe3ekJsyX";
-	static String token2 = "gzV6x7e3rlelUrpYjunWCq6Qe3ekJsyX";
-	static String tokenSecret = "3QPL25CdQ8F-0Lkx9hxLOO20hPE";//"C0f-55BXbqy3FJdu1g7AjxEKjRc";
-	static String tokenSecret2 = "C0f-55BXbqy3FJdu1g7AjxEKjRc";
+import com.csvreader.CsvReader;
 
-	public YelpFetcher(String consumerKey, String consumerSecret, String token,
-			String tokenSecret) {
-		this.service = new ServiceBuilder().provider(YelpApi2.class)
-				.apiKey(consumerKey).apiSecret(consumerSecret).build();
-		this.accessToken = new Token(token, tokenSecret);
+public class YelpFetcher {
+	protected static OAuthService service;
+	protected static ArrayList<HashMap<String, String>> oauthKeys;
+	protected static Token accessToken;
+	protected static int nextKeyIndex;
+	
+	public YelpFetcher() {
+		
+		CsvReader csv = null;
+		if(oauthKeys == null){
+			nextKeyIndex = 0;
+			oauthKeys = new ArrayList<HashMap<String, String>>();
+			try {
+				csv = new CsvReader("res/yelp.csv");
+			
+				csv.readHeaders();
+				while (csv.readRecord())
+				{
+					HashMap<String, String>  h = new HashMap<String, String>();
+					h.put("consumerKey", csv.get(0));
+					h.put("consumerSecret", csv.get(1));
+					h.put("token", csv.get(2));
+					h.put("tokenSecret", csv.get(3));
+					oauthKeys.add(h);
+				}
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			this.reset();
+		}
 	}
 	public void reset(){
-		this.service = new ServiceBuilder().provider(YelpApi2.class)
-				.apiKey(consumerKey2).apiSecret(consumerSecret2).build();
-		this.accessToken = new Token(token2, tokenSecret2);
+		HashMap<String, String> keySet = oauthKeys.get(nextKeyIndex);
+		service = new ServiceBuilder().provider(YelpApi2.class)
+				.apiKey(keySet.get("consumerKey")).apiSecret(keySet.get("consumerSecret")).build();
+		accessToken = new Token(keySet.get("token"), keySet.get("tokenSecret"));
+		nextKeyIndex += 1;
+		if(nextKeyIndex >= oauthKeys.size()) nextKeyIndex %= oauthKeys.size();
 		
 	}
-
-	/**
-	 * Search with term and location.
-	 * 
-	 * @param term
-	 *            Search term
-	 * @param latitude
-	 *            Latitude
-	 * @param longitude
-	 *            Longitude
-	 * @return JSON string response
-	 */
-	public static YelpRecommendations fetch(String term, GeoLocation city) {
+	public YelpRecommendations fetch(String term, GeoLocation city) {
 		OAuthRequest request = new OAuthRequest(Verb.GET, "http://api.yelp.com/v2/search");
 		request.addQuerystringParameter("term", term);
 		request.addQuerystringParameter("ll", city.latitude + "," + city.longitude);
 		request.addQuerystringParameter("sort", "1");
 		request.addQuerystringParameter("limit", "4");
-		YelpRecommendations rs = fetch(request);
+		YelpRecommendations rs = this.fetch(request);
 		return rs;
 	}
-	public static YelpRecommendations fetch(String term, String city) {
+	public YelpRecommendations fetch(String term, String city) {
 		OAuthRequest request = new OAuthRequest(Verb.GET, "http://api.yelp.com/v2/search");
 		request.addQuerystringParameter("term", term);
 		request.addQuerystringParameter("location", city);
 		request.addQuerystringParameter("limit", "4");
-		return fetch(request);
+		return this.fetch(request);
 	}
-	protected static YelpRecommendations fetch(OAuthRequest request) {
-		OAuthService service = new ServiceBuilder().provider(YelpApi2.class).apiKey(consumerKey2).apiSecret(consumerSecret2).build();
-		Token accessToken = new Token(token2, tokenSecret2);
+	protected YelpRecommendations fetch(OAuthRequest request) {
+		this.reset();
+		
+		
 		service.signRequest(accessToken, request);
 		Response response = request.send();
 		ObjectMapper objectMapper = new ObjectMapper();
 		YelpRecommendations recommendations = null;
+		String responseBody = response.getBody(); 
 		try {
-			recommendations = objectMapper.readValue(response.getBody(),
-					YelpRecommendations.class);
+			JsonFactory factory = objectMapper.getJsonFactory();
+			JsonParser jsonParser = factory.createJsonParser(responseBody);
+			ObjectCodec oc = jsonParser.getCodec();
+			JsonNode node = oc.readTree(jsonParser);
+			if(node.get("error") != null){
+				this.reset();
+				Iterator<String> it= request.getQueryStringParams().keySet().iterator();
+				OAuthRequest r2 = new OAuthRequest(Verb.GET, "http://api.yelp.com/v2/search");
+				while(it.hasNext()){
+					String key = it.next();
+					r2.addQuerystringParameter(key, request.getQueryStringParams().get(key));
+				}
+				service.signRequest(accessToken, r2);
+				response = r2.send();
+				objectMapper = new ObjectMapper();
+				responseBody = response.getBody(); 
+			}
+		} catch (JsonParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		try {
+			recommendations = objectMapper.readValue(responseBody, YelpRecommendations.class);
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -102,12 +141,9 @@ public class YelpFetcher {
 
 	// CLI
 	public static void main(String[] args) {
-		// Update tokens here from Yelp developers site, Manage API access.
-		String consumerKey = "s2faseG3-l7IW1DVixnOzw";
-		String consumerSecret = "OqGbhwzXGR-kOkS2AQEszdSWW_8";
-		String token = "gzV6x7e3rlelUrpYjunWCq6Qe3ekJsyX";
-		String tokenSecret = "C0f-55BXbqy3FJdu1g7AjxEKjRc";
-		System.out.println(YelpFetcher.fetch("restaurant", "94086").getRecommendations());
+		
+		YelpFetcher yf = new YelpFetcher();
+		System.out.println(yf.fetch("restaurant", "94086").getRecommendations());
 		
 	}
 

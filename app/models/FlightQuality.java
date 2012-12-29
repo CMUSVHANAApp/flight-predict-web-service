@@ -108,26 +108,27 @@ public class FlightQuality{
 	}
 	public void fetchRecommendations(){
 
+		YelpFetcher yf = new YelpFetcher();
 		if(this.departDelay <= 120 && this.departDelay > 0){
-			this.recommendations.put("Dining", YelpFetcher.fetch("fast+food", this.departAirport.geoLocation));
+			this.recommendations.put("Dining", yf.fetch("fast+food", this.departAirport.geoLocation));
 		}
 		
 		else if(this.departDelay >= 120){
-			this.recommendations.put("Dining", YelpFetcher.fetch("restaurant", this.departAirport.geoLocation));
+			this.recommendations.put("Dining", yf.fetch("restaurant", this.departAirport.geoLocation));
 		}
 		
 		else{
-			this.recommendations.put("Dining", YelpFetcher.fetch("restaurant", this.arrivalAirport.geoLocation));
+			this.recommendations.put("Dining", yf.fetch("restaurant", this.arrivalAirport.geoLocation));
 		}
 		
 		if(this.departDelay > 0){
-			this.recommendations.put("Accomendation", YelpFetcher.fetch("hotel", this.departAirport.geoLocation));
-			this.recommendations.put("Transportation", YelpFetcher.fetch("transportation", this.departAirport.geoLocation));
+			this.recommendations.put("Accomendation", yf.fetch("hotel", this.departAirport.geoLocation));
+			this.recommendations.put("Transportation", yf.fetch("transportation", this.departAirport.geoLocation));
 		}
 		
 		else{
-			this.recommendations.put("Accomendation", YelpFetcher.fetch("hotel", this.arrivalAirport.geoLocation));
-			this.recommendations.put("Transportation", YelpFetcher.fetch("transportation", this.departAirport.geoLocation));
+			this.recommendations.put("Accomendation", yf.fetch("hotel", this.arrivalAirport.geoLocation));
+			this.recommendations.put("Transportation", yf.fetch("transportation", this.departAirport.geoLocation));
 		}
 		
 	}
