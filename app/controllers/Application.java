@@ -52,7 +52,8 @@ public class Application extends Controller {
   }
   
   public  static Result recommendations(String query, String location) throws ParseException, JsonGenerationException, JsonMappingException, IOException{
-	  YelpRecommendations yrs = YelpFetcher.fetch(query, location);
+	  YelpFetcher yf = new YelpFetcher();
+	  YelpRecommendations yrs = yf.fetch(query, location);
 	  return ok(new ObjectMapper().writeValueAsString(yrs));
   }
   
