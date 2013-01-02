@@ -60,10 +60,10 @@ public class WeatherFetcher {
 			return w;
 		} else {
 			Logger.warn(date.toLocaleString());
-			HashMap<String, Weather> ws = Fetch(city);
+			HashMap<Date, Weather> ws = Fetch(city);
 			Date d = new Date(date.getYear(), date.getMonth(), date.getDate(), 0, 0);
-			if (ws.containsKey(date.toGMTString())) {
-				return ws.get(date.toGMTString());
+			if (ws.containsKey(date)) {
+				return ws.get(date);
 			}
 			else{
 				Random r = new Random();
@@ -142,9 +142,9 @@ public class WeatherFetcher {
 
 	}
 
-	public static HashMap<String, Weather> Fetch(String city) {
+	public static HashMap<Date, Weather> Fetch(String city) {
 
-		HashMap<String, Weather> dateWeather = new HashMap<String, Weather>();
+		HashMap<Date, Weather> dateWeather = new HashMap<Date, Weather>();
 		HttpClient httpclient = new DefaultHttpClient();
 		try {
 			System.out.println("QUERY WEATHER:" + city);
@@ -180,7 +180,7 @@ public class WeatherFetcher {
 							.getString("value"), current
 							.getJSONArray("weatherIconUrl").getJSONObject(0)
 							.getString("value"));
-			dateWeather.put(new Date(new Date().getYear(), new Date().getMonth(), new Date().getDate()).toGMTString(), currentWeather);
+			dateWeather.put(new Date(new Date().getYear(), new Date().getMonth(), new Date().getDate()), currentWeather);
 			for (int i = 0; i < forecasts.length(); i++) {
 				JSONObject jw = forecasts.getJSONObject(i);
 				SimpleDateFormat ds = new SimpleDateFormat("yyyy-MM-dd");
@@ -195,7 +195,7 @@ public class WeatherFetcher {
 								.getString("value"), jw
 								.getJSONArray("weatherIconUrl")
 								.getJSONObject(0).getString("value"));
-				dateWeather.put(d.toGMTString(), w);
+				dateWeather.put(d, w);
 
 			}
 
