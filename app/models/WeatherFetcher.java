@@ -37,13 +37,14 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import play.Logger;
+import scala.util.Random;
 
 public class WeatherFetcher {
 	public static void main(String[] args) {
 		String city = "Mountain View, CA+States";
 		System.out.println("Weather of " + city + ":");
 		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DATE, -1);
+		cal.add(Calendar.DATE, +1);
 		System.out.println(WeatherFetcher.Fetch(city,  cal.getTime()));
 	}
 
@@ -59,13 +60,17 @@ public class WeatherFetcher {
 			return w;
 		} else {
 			Logger.warn(date.toLocaleString());
-			HashMap<Date, Weather> ws = Fetch(city);
+			HashMap<String, Weather> ws = Fetch(city);
 			Date d = new Date(date.getYear(), date.getMonth(), date.getDate(), 0, 0);
-			if (ws.containsKey(date)) {
-				return ws.get(date);
+			if (ws.containsKey(date.toGMTString())) {
+				return ws.get(date.toGMTString());
+			}
+			else{
+				Random r = new Random();
+				return (Weather)ws.values().toArray()[r.nextInt(ws.size()-1)];
 			}
 		}
-		return null;
+		//return null;
 	}
 
 	public static Weather FetchHistory(City city, Date d) {
@@ -137,9 +142,9 @@ public class WeatherFetcher {
 
 	}
 
-	public static HashMap<Date, Weather> Fetch(String city) {
+	public static HashMap<String, Weather> Fetch(String city) {
 
-		HashMap<Date, Weather> dateWeather = new HashMap<Date, Weather>();
+		HashMap<String, Weather> dateWeather = new HashMap<String, Weather>();
 		HttpClient httpclient = new DefaultHttpClient();
 		try {
 			System.out.println("QUERY WEATHER:" + city);
@@ -175,7 +180,7 @@ public class WeatherFetcher {
 							.getString("value"), current
 							.getJSONArray("weatherIconUrl").getJSONObject(0)
 							.getString("value"));
-			dateWeather.put(new Date(new Date().getYear(), new Date().getMonth(), new Date().getDate()), currentWeather);
+			dateWeather.put(new Date(new Date().getYear(), new Date().getMonth(), new Date().getDate()).toGMTString(), currentWeather);
 			for (int i = 0; i < forecasts.length(); i++) {
 				JSONObject jw = forecasts.getJSONObject(i);
 				SimpleDateFormat ds = new SimpleDateFormat("yyyy-MM-dd");
@@ -190,7 +195,7 @@ public class WeatherFetcher {
 								.getString("value"), jw
 								.getJSONArray("weatherIconUrl")
 								.getJSONObject(0).getString("value"));
-				dateWeather.put(d, w);
+				dateWeather.put(d.toGMTString(), w);
 
 			}
 
