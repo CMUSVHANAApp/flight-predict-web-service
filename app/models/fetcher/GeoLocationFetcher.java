@@ -1,4 +1,4 @@
-package models;
+package models.fetcher;
 
 import java.io.IOException;
 import java.net.URI;
@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import models.GeoLocation;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -19,6 +21,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonProcessingException;
@@ -60,7 +63,33 @@ public class GeoLocationFetcher {
             ObjectMapper objectMapper = new ObjectMapper();  
             try  
             {  
-                 geo = objectMapper.readValue(responseBody, GeoLocation.class);  
+            	JsonFactory factory = objectMapper.getJsonFactory();
+    			JsonParser jsonParser = factory.createJsonParser(responseBody);
+            	ObjectCodec oc = jsonParser.getCodec();
+        		JsonNode node = oc.readTree(jsonParser).get("results").get(0);
+        		JsonNode geometry = node.get("geometry").get("location");
+        		JsonNode address = node.get("address_components");
+        		String city = "";
+        		String zipcode = "";
+        		for(int i=0;i<address.size();i++){
+        			JsonNode component = address.get(i);
+        			String types = component.get("types").get(0).asText();
+        			if(types.equals("administrative_area_level_2") || types.equals("locality")){
+        				city = component.get("long_name").asText();
+        			}
+        			if(types.equals("administrative_area_level_1")){
+        				city += ", " + component.get("long_name").asText();
+        			}
+        			/*
+        			if(type.equals("country")){
+        				city += "," + component.get("long_name");
+        			}
+        			*/
+        			if(types.equals("postal_code")){
+        				zipcode = component.get("long_name").asText();
+        			}
+        		}
+        		return  new GeoLocation(city, zipcode, geometry.get("lng").asDouble(), geometry.get("lat").asDouble());  
                
             }  
             catch(Exception e)  
@@ -81,41 +110,6 @@ public class GeoLocationFetcher {
             httpclient.getConnectionManager().shutdown();
         }
 		return geo;
-	}
-
-}
-
-class GeoLocationDeserializer extends JsonDeserializer<GeoLocation> {
-
-	@Override
-	public GeoLocation deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
-			throws IOException, JsonProcessingException {
-
-		ObjectCodec oc = jsonParser.getCodec();
-		JsonNode node = oc.readTree(jsonParser).get("results").get(0);
-		JsonNode geometry = node.get("geometry").get("location");
-		JsonNode address = node.get("address_components");
-		String city = "";
-		String zipcode = "";
-		for(int i=0;i<address.size();i++){
-			JsonNode component = address.get(i);
-			String types = component.get("types").get(0).asText();
-			if(types.equals("administrative_area_level_2") || types.equals("locality")){
-				city = component.get("long_name").asText();
-			}
-			if(types.equals("administrative_area_level_1")){
-				city += ", " + component.get("long_name").asText();
-			}
-			/*
-			if(type.equals("country")){
-				city += "," + component.get("long_name");
-			}
-			*/
-			if(types.equals("postal_code")){
-				zipcode = component.get("long_name").asText();
-			}
-		}
-		return  new GeoLocation(city, zipcode, geometry.get("lng").asDouble(), geometry.get("lat").asDouble());
 	}
 
 }

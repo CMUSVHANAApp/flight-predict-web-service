@@ -15,13 +15,13 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import models.Airport;
-import models.AirportInfoFetcher;
 import models.GeoLocation;
 import models.Prediction;
-import models.WeatherFetcher;
 import models.Weather;
-import models.YelpFetcher;
 import models.YelpRecommendations;
+import models.fetcher.AirportInfoFetcher;
+import models.fetcher.WeatherFetcher;
+import models.fetcher.YelpFetcher;
 import play.*;
 import play.libs.Json;
 import play.mvc.*;

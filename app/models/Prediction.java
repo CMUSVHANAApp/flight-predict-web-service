@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+import models.fetcher.FlightInfoFetcher;
+
 import scala.util.Random;
 import com.csvreader.CsvReader;
 

@@ -54,8 +54,25 @@ class Weather extends JsonDeserializer<Weather>{
 	public Weather(Date date, double temp, double windspeed, int code, String description, String icon){
 		this(date, temp, windspeed, -1, -1, code, description, icon);
 	}
-	
-	public String getDate(){
+	public void setDate(Date date){
+		this.date = date;
+	}
+	public void setVisibility(int visibility){
+		this.visibility = visibility;
+	}
+	public void setTemp(double temp){
+		this.temp = temp;
+	}
+	public void setPressure(int pressure){
+		this.pressure = pressure;
+	}
+	public void setWindSpeed(double windspeed){
+		this.windspeed = windspeed;
+	}
+	public Date getDate(){
+		return this.date;
+	}
+	public String getDateString(){
 		return this.date.toGMTString();
 	}
 	public double getTemp(){

@@ -1,4 +1,4 @@
-package models;
+package models.fetcher;
 
 import java.io.IOException;
 import java.net.URI;
@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
+
+import models.Airport;
+import models.Weather;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -110,13 +113,13 @@ public class WeatherFetcher {
 					Date wd = ds.parse(node.get("time").asText());
 					if(wd.getHours() != d.getHours()) continue;
 					ds = new SimpleDateFormat("yyyyMMdd");
-					w.date = ds.parse(node.get("date").asText());
-					w.date = new Date(w.date.getYear(), w.date.getMonth(), w.date.getDate(), wd.getHours(), wd.getMinutes());
+					w.setDate(ds.parse(node.get("date").asText()));
+					w.setDate(new Date(w.getDate().getYear(), w.getDate().getMonth(), w.getDate().getDate(), wd.getHours(), wd.getMinutes()));
 
-					w.visibility = node.get("visibilityObDistDim").asInt();
-					w.temp = node.get("airTemp").asDouble();
-					w.pressure = node.get("airPressureObSeaLevelPressure").asInt();
-					w.windspeed = node.get("windObSpeedRate").asDouble();
+					w.setVisibility(node.get("visibilityObDistDim").asInt());
+					w.setTemp(node.get("airTemp").asDouble());
+					w.setPressure(node.get("airPressureObSeaLevelPressure").asInt());
+					w.setWindSpeed( node.get("windObSpeedRate").asDouble());
 					return w;
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block

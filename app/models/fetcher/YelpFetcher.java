@@ -1,4 +1,4 @@
-package models;
+package models.fetcher;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -6,20 +6,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import models.Airport;
+import models.GeoLocation;
+import models.YelpBiz;
+import models.YelpRecommendations;
+
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.ObjectCodec;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.JsonDeserializer;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.scribe.builder.ServiceBuilder;
-import org.scribe.builder.api.DefaultApi10a;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Response;
 import org.scribe.model.Token;
@@ -75,7 +74,7 @@ public class YelpFetcher {
 	public YelpRecommendations fetch(String term, GeoLocation city) {
 		OAuthRequest request = new OAuthRequest(Verb.GET, "http://api.yelp.com/v2/search");
 		request.addQuerystringParameter("term", term);
-		request.addQuerystringParameter("ll", city.latitude + "," + city.longitude);
+		request.addQuerystringParameter("ll", city.getLatitude() + "," + city.getLongitude());
 		request.addQuerystringParameter("sort", "1");
 		request.addQuerystringParameter("limit", "4");
 		YelpRecommendations rs = this.fetch(request);
@@ -124,7 +123,78 @@ public class YelpFetcher {
 		}
 		
 		try {
-			recommendations = objectMapper.readValue(responseBody, YelpRecommendations.class);
+			//recommendations = objectMapper.readValue(responseBody, YelpRecommendations.class);
+			JsonFactory factory = objectMapper.getJsonFactory();
+			JsonParser jsonParser = factory.createJsonParser(responseBody);
+			ObjectCodec oc = jsonParser.getCodec();
+			JsonNode node = oc.readTree(jsonParser).get("businesses");
+			recommendations = new YelpRecommendations("");
+			if(node == null) return recommendations;
+			for (int i = 0; i < node.size(); i++) {
+				JsonNode business = node.get(i);
+				String name = business.get("name").asText();
+				double rating  = 0;
+				try{
+					rating = business.get("rating").asDouble();
+				}
+				catch(Exception e){
+					
+				}
+				String address ="";
+				try{
+					address= business.get("location").get("display_address").get(0).asText();
+				}
+				catch(Exception e){
+					
+				}
+				String city ="";
+				try{
+					city = business.get("location").get("city").asText();
+				}
+				catch (Exception e){
+					
+				}
+				String zipcode ="";
+				try{
+					zipcode = business.get("location").get("postal_code").asText();
+				}
+				catch(Exception e){
+					
+				}
+				double distance =0;
+				try{
+					distance = business.get("distance").asDouble() * 0.000621371;
+				}
+				catch (Exception e){
+					
+				}
+				String category = "";
+				try{
+					category= business.get("categories").get(0).get(0).asText();
+				}
+				catch (Exception e){
+					
+				}
+				String phone = "";
+				try{
+					phone = business.get("phone").asText();
+				}
+				catch (Exception e){
+					
+				}
+				double longitude = business.get("location").get("coordinate")
+						.get("longitude").asDouble();
+				double latitude = business.get("location").get("coordinate")
+						.get("latitude").asDouble();
+				YelpBiz b = new YelpBiz(name, category, latitude, longitude, address, city,
+						zipcode);
+				b.setRating(rating);
+				b.setDistance(distance);
+				b.setPhone(phone);
+				recommendations.addBiz(b);
+			}
+			
+			
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -143,84 +213,10 @@ public class YelpFetcher {
 	public static void main(String[] args) {
 		
 		YelpFetcher yf = new YelpFetcher();
+		//yf.fetch("restaurant", Airport.findAirport("SFO").getGeoLocation());
+		
 		System.out.println(yf.fetch("restaurant", "94086").getRecommendations());
 		
 	}
 
-}
-
-class YelpBizDeserializer extends JsonDeserializer<YelpRecommendations> {
-
-	@Override
-	public YelpRecommendations deserialize(JsonParser jsonParser,
-			DeserializationContext deserializationContext) throws IOException {
-		ObjectCodec oc = jsonParser.getCodec();
-		JsonNode node = oc.readTree(jsonParser).get("businesses");
-		YelpRecommendations yelpRecommendations = new YelpRecommendations("");
-		if(node == null) return yelpRecommendations;
-		for (int i = 0; i < node.size(); i++) {
-			JsonNode business = node.get(i);
-			String name = business.get("name").asText();
-			double rating  = 0;
-			try{
-				rating = business.get("rating").asDouble();
-			}
-			catch(Exception e){
-				
-			}
-			String address ="";
-			try{
-				address= business.get("location").get("display_address").get(0).asText();
-			}
-			catch(Exception e){
-				
-			}
-			String city ="";
-			try{
-				city = business.get("location").get("city").asText();
-			}
-			catch (Exception e){
-				
-			}
-			String zipcode ="";
-			try{
-				zipcode = business.get("location").get("postal_code").asText();
-			}
-			catch(Exception e){
-				
-			}
-			double distance =0;
-			try{
-				distance = business.get("distance").asDouble() * 0.000621371;
-			}
-			catch (Exception e){
-				
-			}
-			String category = "";
-			try{
-				category= business.get("categories").get(0).get(0).asText();
-			}
-			catch (Exception e){
-				
-			}
-			String phone = "";
-			try{
-				phone = business.get("phone").asText();
-			}
-			catch (Exception e){
-				
-			}
-			double longitude = business.get("location").get("coordinate")
-					.get("longitude").asDouble();
-			double latitude = business.get("location").get("coordinate")
-					.get("latitude").asDouble();
-			YelpBiz b = new YelpBiz(name, category, latitude, longitude, address, city,
-					zipcode);
-			b.setRating(rating);
-			b.setDistance(distance);
-			b.setPhone(phone);
-			yelpRecommendations.addBiz(b);
-		}
-		return yelpRecommendations;
-	}
 }

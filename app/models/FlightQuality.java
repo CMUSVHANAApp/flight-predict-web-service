@@ -6,6 +6,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
 
+import models.fetcher.WeatherFetcher;
+import models.fetcher.YelpFetcher;
+
 public class FlightQuality{
 	protected String flightNumber;
 	protected int departDelay;

@@ -1,10 +1,12 @@
-package models;
+package models.fetcher;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import models.FlightQuality;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

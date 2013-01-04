@@ -1,4 +1,4 @@
-package models;
+package models.fetcher;
 
 import org.scribe.builder.api.DefaultApi10a;
 import org.scribe.model.Token;

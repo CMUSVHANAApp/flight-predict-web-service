@@ -4,17 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Random;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.ObjectCodec;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.JsonDeserializer;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
-@JsonDeserialize(using = GeoLocationDeserializer.class)
-@JsonIgnoreProperties(ignoreUnknown=true)  
 public class GeoLocation implements Serializable {
 	/**
 	 * 

@@ -1,4 +1,4 @@
-package models;
+package models.fetcher;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+
+import models.Airline;
+import models.Airport;
+import models.FlightQuality;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Connection;
