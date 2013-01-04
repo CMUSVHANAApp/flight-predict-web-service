@@ -10,19 +10,23 @@ public class FlightQuality{
 	protected String flightNumber;
 	protected int departDelay;
 	protected int arrivalDelay;
-	protected City departAirport;
-	protected City arrivalAirport;
+	protected Airport departAirport;
+	protected Airport arrivalAirport;
 	protected Weather departWeather;
 	protected Weather arrivalWeather;
 	protected String airline;
 	protected Date date;
 	protected Date arrivalDate;
 	protected HashMap<String, YelpRecommendations> recommendations;
-	public FlightQuality(String flightNumber, Date arrivalDate, Date departureDate){
+	public FlightQuality(String airline, String flightNumber, Date arrivalDate, Date departureDate){
+		this.airline = airline;
 		this.flightNumber = flightNumber;
 		this.arrivalDate = arrivalDate;
 		this.date = departureDate;
 		this.recommendations = new HashMap<String, YelpRecommendations>();
+	}
+	public FlightQuality(String flightNumber, Date arrivalDate, Date departureDate){
+		this("", flightNumber, arrivalDate, departureDate);
 	}
 	public FlightQuality(String airline, String flightNumber, Date d, String departure, String arrival){
 		this(airline, flightNumber, d, departure, arrival, true);
@@ -30,7 +34,7 @@ public class FlightQuality{
 	public FlightQuality(String airline, String flightNumber, Date d, String departure, String arrival, boolean fetchData){
 		this.flightNumber = flightNumber;
 		this.date = d;
-		this.departAirport = new City(departure, fetchData);
+		this.departAirport = Airport.findAirport(departure);
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(d);
@@ -45,7 +49,7 @@ public class FlightQuality{
 		
 		this.arrivalDate = cal.getTime();
 		this.airline = airline;
-		this.arrivalAirport = new City(arrival, fetchData);
+		this.arrivalAirport = Airport.findAirport(arrival);
 		this.recommendations = new HashMap<String, YelpRecommendations>();
 	}
 	public Date getArrivalDateTime(){
@@ -69,10 +73,10 @@ public class FlightQuality{
 	public Weather getArrivalWeather(){
 		return this.arrivalWeather;
 	}
-	public City getDepartAirport(){
+	public Airport getDepartAirport(){
 		return this.departAirport;
 	}
-	public City getArrivalAirport(){
+	public Airport getArrivalAirport(){
 		return this.arrivalAirport;
 	}
 	public HashMap<String, YelpRecommendations> getRecommendations(){
@@ -94,41 +98,41 @@ public class FlightQuality{
 		
 	}
 	public void setDepartureAirport(String airport){
-		this.departAirport = new City(airport);
+		this.departAirport = Airport.findAirport(airport);
 	}
 	public void setArrivalAirport(String airport){
-		this.arrivalAirport = new City(airport);
+		this.arrivalAirport = Airport.findAirport(airport);
 	}
 	public void setAirline(String airline){
 		this.airline = airline;
 	}
 	public void fetchWeather(){
 		this.departWeather = WeatherFetcher.Fetch(this.departAirport.getGeoLocation().city, this.date);
-		this.arrivalWeather = WeatherFetcher.Fetch(this.arrivalAirport.getGeoLocation().city, this.date);
+		this.arrivalWeather = WeatherFetcher.Fetch(this.arrivalAirport.getGeoLocation().city, this.arrivalDate);
 	}
 	public void fetchRecommendations(){
 
 		YelpFetcher yf = new YelpFetcher();
 		if(this.departDelay <= 120 && this.departDelay > 0){
-			this.recommendations.put("Dining", yf.fetch("fast+food", this.departAirport.geoLocation));
+			this.recommendations.put("Dining", yf.fetch("fast+food", this.departAirport.getGeoLocation()));
 		}
 		
 		else if(this.departDelay >= 120){
-			this.recommendations.put("Dining", yf.fetch("restaurant", this.departAirport.geoLocation));
+			this.recommendations.put("Dining", yf.fetch("restaurant", this.departAirport.getGeoLocation()));
 		}
 		
 		else{
-			this.recommendations.put("Dining", yf.fetch("restaurant", this.arrivalAirport.geoLocation));
+			this.recommendations.put("Dining", yf.fetch("restaurant", this.arrivalAirport.getGeoLocation()));
 		}
 		
 		if(this.departDelay > 0){
-			this.recommendations.put("Accomendation", yf.fetch("hotel", this.departAirport.geoLocation));
-			this.recommendations.put("Transportation", yf.fetch("transportation", this.departAirport.geoLocation));
+			this.recommendations.put("Accomendation", yf.fetch("hotel", this.departAirport.getGeoLocation()));
+			this.recommendations.put("Transportation", yf.fetch("transportation", this.departAirport.getGeoLocation()));
 		}
 		
 		else{
-			this.recommendations.put("Accomendation", yf.fetch("hotel", this.arrivalAirport.geoLocation));
-			this.recommendations.put("Transportation", yf.fetch("transportation", this.departAirport.geoLocation));
+			this.recommendations.put("Accomendation", yf.fetch("hotel", this.arrivalAirport.getGeoLocation()));
+			this.recommendations.put("Transportation", yf.fetch("transportation", this.departAirport.getGeoLocation()));
 		}
 		
 	}

@@ -6,7 +6,9 @@
 GET     /                           controllers.Application.index()
 
 # Flight Information
-GET     /flights					controllers.Application.flights()
+GET     /flights/:depart/:arrival		controllers.Application.flights2(depart: String, arrival:String)
+GET     /flights/:airport				controllers.Application.flights(airport: String)
+GET     /flights						controllers.Application.flights(airport = "PHL")
 
 # WeatherForecast
 GET		/weathers/:city/:date.:format				controllers.Application.weather(format: String, city: String, date:String)

@@ -55,25 +55,22 @@ public class WeatherFetcher {
 		
 		Date yesterday = cal.getTime();
 		if (date.before(yesterday)) {
-			City c = new City(city);
-			Weather w = FetchHistory(c, date);
+			Airport a = Airport.findAirport(city);
+			Weather w = FetchHistory(a, date);
 			return w;
 		} else {
 			Logger.warn(date.toLocaleString());
 			HashMap<Date, Weather> ws = Fetch(city);
 			Date d = new Date(date.getYear(), date.getMonth(), date.getDate(), 0, 0);
-			if (ws.containsKey(date)) {
-				return ws.get(date);
+			if (ws.containsKey(d)) {
+				return ws.get(d);
 			}
-			else{
-				Random r = new Random();
-				return (Weather)ws.values().toArray()[r.nextInt(ws.size()-1)];
-			}
+			
 		}
-		//return null;
+		return null;
 	}
 
-	public static Weather FetchHistory(City city, Date d) {
+	public static Weather FetchHistory(Airport airport, Date d) {
 		HttpClient httpclient = new DefaultHttpClient();
 		Weather w = null;
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
@@ -84,8 +81,8 @@ public class WeatherFetcher {
 			uri.addParameter("key", "0d443aaac5e3dc33a02ed75c070af5705fe08c27");
 			uri.addParameter("dates", dateString);
 			uri.addParameter("precip", "yes");
-			uri.addParameter("latitude", String.valueOf(city.getGeoLocation().getLatitude()));
-			uri.addParameter("longitude", String.valueOf(city.getGeoLocation().getLongitude()));
+			uri.addParameter("latitude", String.valueOf(airport.getGeoLocation().getLatitude()));
+			uri.addParameter("longitude", String.valueOf(airport.getGeoLocation().getLongitude()));
 			HttpGet httpget = new HttpGet(uri.build());
 			// Create a response handler
 			ResponseHandler<String> responseHandler = new BasicResponseHandler();
@@ -142,17 +139,16 @@ public class WeatherFetcher {
 
 	}
 
-	public static HashMap<Date, Weather> Fetch(String city) {
+	public static HashMap<Date, Weather> Fetch(String airport) {
 
 		HashMap<Date, Weather> dateWeather = new HashMap<Date, Weather>();
 		HttpClient httpclient = new DefaultHttpClient();
 		try {
-			System.out.println("QUERY WEATHER:" + city);
+			System.out.println("QUERY WEATHER:" + airport);
 			List<NameValuePair> qparams = new ArrayList<NameValuePair>();
-			qparams.add(new BasicNameValuePair("q", city));
-			URIBuilder uri = new URIBuilder(
-					"http://free.worldweatheronline.com/feed/weather.ashx");
-			uri.addParameter("q", city);
+			qparams.add(new BasicNameValuePair("q", airport));
+			URIBuilder uri = new URIBuilder("http://free.worldweatheronline.com/feed/weather.ashx");
+			uri.addParameter("q", airport);
 			uri.addParameter("format", "json");
 			uri.addParameter("num_of_days", "5");
 			uri.addParameter("key", "c2c813d05c230948123011");

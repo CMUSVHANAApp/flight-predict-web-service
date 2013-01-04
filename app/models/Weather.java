@@ -56,7 +56,7 @@ class Weather extends JsonDeserializer<Weather>{
 	}
 	
 	public String getDate(){
-		return this.date.toLocaleString();
+		return this.date.toGMTString();
 	}
 	public double getTemp(){
 		return this.temp;
@@ -90,7 +90,7 @@ class Weather extends JsonDeserializer<Weather>{
 		output = "'date', 'tempF', 'windSpeed', 'visibility', 'BarometricPressure','weatherCode', 'weatherDescription', 'weatherIcon'\n";
 		while(it.hasNext()){
 			Date date = it.next();
-			output += "'" + date.toLocaleString() + "', ";
+			output += "'" + date.toGMTString() + "', ";
 			Weather w = ws.get(date);
 			output += w.getTemp() + ", ";
 			output += w.getWindSpeed() + ", ";

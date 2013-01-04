@@ -14,6 +14,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import models.Airport;
 import models.AirportInfoFetcher;
 import models.GeoLocation;
 import models.Prediction;
@@ -31,7 +32,7 @@ import views.*;
 public class Application extends Controller {
   
   public static Result index() {
-    return ok(home.render());
+    return ok(index.render());
   }
   
   public static Result weathers(String format, String city) throws JsonGenerationException, JsonMappingException, IOException, IntrospectionException{
@@ -66,7 +67,10 @@ public class Application extends Controller {
 	  return ok( new ObjectMapper().writeValueAsString(p.predict(airline, flightNumber, d, departure, arrival)) );
   }
   
-  public static Result flights() throws JsonGenerationException, JsonMappingException, IOException, ParseException{
-	  return ok(new ObjectMapper().writeValueAsString(new AirportInfoFetcher().fetch()));
+  public static Result flights(String airportCode) throws JsonGenerationException, JsonMappingException, IOException, ParseException{
+	  return ok(new ObjectMapper().writeValueAsString(new AirportInfoFetcher().fetch(Airport.findAirport(airportCode))));
+  }
+  public static Result flights2(String departAirportCode, String arrivalAirportCode) throws JsonGenerationException, JsonMappingException, IOException, ParseException{
+	  return ok(new ObjectMapper().writeValueAsString(new AirportInfoFetcher().fetch(Airport.findAirport(departAirportCode),  Airport.findAirport(arrivalAirportCode))));
   }
 }

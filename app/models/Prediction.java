@@ -86,7 +86,7 @@ public class Prediction {
 		
 		quality.setDelay(makePrediction(quality.getDepartureDateTime()), makePrediction(quality.getArrivalDateTime()));
 		
-		quality.fetchRecommendations();
+		//quality.fetchRecommendations();
 		return quality;
 	}
 	protected int makePrediction(Date d){
